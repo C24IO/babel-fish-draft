@@ -1,0 +1,246 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+
+  DataBucket:
+    Type: AWS::S3::Bucket
+
+  TranscribeLambda:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Handler: "lambda_function.lambda_handler"
+      Role: !GetAtt TranscribeLambdaRole.Arn
+      Code:
+        S3Bucket: "tomasz-us-east-1"
+        S3Key: "ReInvent2018/Workshop/TranscribeLambda.zip"
+      Runtime: "python3.6"
+      Timeout: 30
+
+  TranslateLambda:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Handler: "lambda_function.lambda_handler"
+      Role: !GetAtt TranslateLambdaRole.Arn
+      Code:
+        S3Bucket: "tomasz-us-east-1"
+        S3Key: "ReInvent2018/Workshop/TranslateLambda.zip"
+      Runtime: "python3.6"
+      Timeout: 30
+
+  TextToSpeechLambda:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Handler: "lambda_function.lambda_handler"
+      Role: !GetAtt TextToSpeechLambdaRole.Arn
+      Code:
+        S3Bucket: "tomasz-us-east-1"
+        S3Key: "ReInvent2018/Workshop/TextToSpeechLambda.zip"
+      Runtime: "python3.6"
+      Timeout: 30
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: !Ref DataBucket
+
+  TranscribeLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: S3Access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                Resource:
+                  Fn::Join:
+                    - ""
+                    -
+                      - "arn:aws:s3:::"
+                      -  Ref: "DataBucket"
+                      - "/*"
+        - PolicyName: TranscribeAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "transcribe:StartTranscriptionJob"
+                Resource: "*"
+        - PolicyName: CloudWatchPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "arn:aws:logs:*:*:*"
+
+  TranslateLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: S3Access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                Resource:
+                  Fn::Join:
+                    - ""
+                    -
+                      - "arn:aws:s3:::"
+                      -  Ref: "DataBucket"
+                      - "/*"
+        - PolicyName: TranslateAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "translate:TranslateText"
+                Resource: "*"
+        - PolicyName: CloudWatchPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "arn:aws:logs:*:*:*"
+
+  TextToSpeechLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: PollyAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "polly:SynthesizeSpeech"
+                Resource: "*"
+        - PolicyName: S3Access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:PutObjectAcl"
+                Resource:
+                  Fn::Join:
+                    - ""
+                    -
+                      - "arn:aws:s3:::"
+                      -  Ref: "DataBucket"
+                      - "/*"
+        - PolicyName: S3LocationAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetBucketLocation"
+                Resource: "arn:aws:s3:::*"
+        - PolicyName: CloudWatchPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "arn:aws:logs:*:*:*"
+
+
+  CognitoIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      AllowUnauthenticatedIdentities: True
+
+
+  # Assigns the roles to the Identity Pool
+  IdentityPoolRoleMapping:
+    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+    Properties:
+      IdentityPoolId: !Ref CognitoIdentityPool
+      Roles:
+        unauthenticated: !GetAtt CognitoUnAuthorizedRole.Arn
+
+  CognitoUnAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Federated: "cognito-identity.amazonaws.com"
+            Action:
+              - "sts:AssumeRoleWithWebIdentity"
+      Policies:
+        - PolicyName: "CognitoUnauthorizedPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource:
+                  - !GetAtt TranscribeLambda.Arn
+                  - !GetAtt TranslateLambda.Arn
+                  - !GetAtt TextToSpeechLambda.Arn
+
+
+Outputs:
+  S3BucketOutput:
+    Description: S3 Bucket
+    Value: !Ref DataBucket
+  TranscribeLambdaOutput:
+    Description: Transcribe Lambda
+    Value: !Ref TranscribeLambda
+  TranslateLambdaOutput:
+    Description: Translate Lambda
+    Value: !Ref TranslateLambda
+  TextToSpeechLambdaOutput:
+    Description: Text-To-Speech Lambda
+    Value: !Ref TextToSpeechLambda
+  IdentityPoolIdOutput:
+    Description: IdentityPoolId
+    Value: !Ref CognitoIdentityPool
