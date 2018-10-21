@@ -1,26 +1,15 @@
 import logging
-import json
+import boto3
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-#TODO
-#This function should get in the input (event) following parameters: text, language, correlationId. Example input:
-#{
-#  "text": "This is simple text",
-#  "language": "en",
-#  "correlationId": "42535425"
-#}
-#The function should save new created audio file in the bucket, and should return the JSON with a link to the file as a response.
+polly = boto3.client("polly")
 
 
 def lambda_handler(event, context):
-    
-    logger.info(">> Converting to audio")
-    logger.info('Input event{}'.format(event))
+    """
+    @TODO: Parse data from S3 event to get translation result and synthesize it with Amazon Polly.
+    """
 
-
-    response = {}
-    response["link"] = "ReInvent 2018: Implementation TODO (Text-To-Speech Lambda)
-
-    return json.dumps(response);
+    return True
