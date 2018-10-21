@@ -27,11 +27,11 @@ Resources:
       Runtime: "python3.6"
       Timeout: 30
 
-  TextToSpeechLambda:
+  PollyLambda:
     Type: "AWS::Lambda::Function"
     Properties:
       Handler: "lambda_function.lambda_handler"
-      Role: !GetAtt TextToSpeechLambdaRole.Arn
+      Role: !GetAtt PollyLambdaRole.Arn
       Code:
         S3Bucket: "tomasz-us-east-1"
         S3Key: "ReInvent2018/Workshop/TextToSpeechLambda.zip"
@@ -133,7 +133,7 @@ Resources:
                   - "logs:PutLogEvents"
                 Resource: "arn:aws:logs:*:*:*"
 
-  TextToSpeechLambdaRole:
+  PollyLambdaRole:
     Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument:
@@ -225,7 +225,7 @@ Resources:
                 Resource:
                   - !GetAtt TranscribeLambda.Arn
                   - !GetAtt TranslateLambda.Arn
-                  - !GetAtt TextToSpeechLambda.Arn
+                  - !GetAtt PollyLambda.Arn
 
 
 Outputs:
@@ -238,9 +238,9 @@ Outputs:
   TranslateLambdaOutput:
     Description: Translate Lambda
     Value: !Ref TranslateLambda
-  TextToSpeechLambdaOutput:
-    Description: Text-To-Speech Lambda
-    Value: !Ref TextToSpeechLambda
+  PollyLambdaOutput:
+    Description: Polly Lambda
+    Value: !Ref PollyLambda
   IdentityPoolIdOutput:
     Description: IdentityPoolId
     Value: !Ref CognitoIdentityPool
