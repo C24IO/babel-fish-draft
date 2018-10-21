@@ -11,8 +11,8 @@ Resources:
       Handler: "lambda_function.lambda_handler"
       Role: !GetAtt TranscribeLambdaRole.Arn
       Code:
-        S3Bucket: "tomasz-us-east-1"
-        S3Key: "ReInvent2018/Workshop/TranscribeLambda.zip"
+        S3Bucket: "babel-fish-reinvent"
+        S3Key: "TranscribeLambda.zip"
       Runtime: "python3.6"
       Timeout: 30
 
@@ -22,8 +22,8 @@ Resources:
       Handler: "lambda_function.lambda_handler"
       Role: !GetAtt TranslateLambdaRole.Arn
       Code:
-        S3Bucket: "tomasz-us-east-1"
-        S3Key: "ReInvent2018/Workshop/TranslateLambda.zip"
+        S3Bucket: "babel-fish-reinvent"
+        S3Key: "TranslateLambda.zip"
       Runtime: "python3.6"
       Timeout: 30
 
@@ -33,8 +33,8 @@ Resources:
       Handler: "lambda_function.lambda_handler"
       Role: !GetAtt PollyLambdaRole.Arn
       Code:
-        S3Bucket: "tomasz-us-east-1"
-        S3Key: "ReInvent2018/Workshop/TextToSpeechLambda.zip"
+        S3Bucket: "babel-fish-reinvent"
+        S3Key: "PollyLambda.zip"
       Runtime: "python3.6"
       Timeout: 30
       Environment:
