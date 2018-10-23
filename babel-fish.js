@@ -1,7 +1,7 @@
 // AWS configuration
 var awsRegion = 'us-east-1';
-var bucketName = 'babel-fish-databucket-1xbyb6a2ky1fa';
-var IdentityPoolId = 'us-east-1:645e179a-130c-42f6-b5be-29cc32e9cd07';
+var bucketName = '!!!!! REPLACE !!!!!';
+var IdentityPoolId = '!!!!! REPLACE !!!!!';
 
 AWS.config.update({
   region: awsRegion,
