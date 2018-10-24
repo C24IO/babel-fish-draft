@@ -78,8 +78,7 @@ function uploadAudio() {
   var inputKey = 'input/' + requestId + '.' + fileExtension;
   s3.upload({
     Key: inputKey,
-    Body: file,
-    ACL: 'public-read'
+    Body: file
   }, function(err, data) {
     if (err) {
       return alert('There was an error uploading your file: ', err.message);
