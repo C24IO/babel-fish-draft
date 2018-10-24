@@ -80,5 +80,8 @@ Implement the function to parse data from S3 event to get translation result and
 
 It's time to let your Babel-fish out :)
 
+## Extra task
+
+Put the static file with JavaScript application in S3 bucket to make it available online. See [Hosting a Static Website on Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) Developer Guide for reference.
 
 
