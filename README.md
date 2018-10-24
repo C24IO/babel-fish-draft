@@ -13,7 +13,8 @@ Login to your AWS Console and choose `us-east-1` (N. Virginia) region. Use Cloud
 1. On `Review` page acknowledge that CloudFormation might create IAM resources and click `Create`
 1. Wait a few moments until status changes from `CREATE_IN_PROGRESS` to `CREATE_COMPLETE`.
 
-Go to Stacks > Stack Detail and expand the Outputs section, in that note down the S3 bucket created as - S3BucketOutput
+Go to Stacks > Stack Detail and expand the Outputs section, in that note down the S3BucketOutput & IdentityPoolIdOutput
+
 Use S3 service in the AWS Console to create `input` and `output` folders in the bucket created by CloudFormation.
 
 Check resources created by CloudFormation and update JavaScript app with your configuration data:
