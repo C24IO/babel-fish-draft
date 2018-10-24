@@ -4,6 +4,15 @@ Resources:
 
   DataBucket:
     Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+        - AllowedHeaders: ['*']
+          AllowedMethods: [GET,PUT,POST,HEAD]
+          AllowedOrigins: ['*']
+          Id: myCORSRuleId1
+          MaxAge: '3600'
 
   TranscribeLambda:
     Type: "AWS::Lambda::Function"
@@ -226,7 +235,16 @@ Resources:
                   - !GetAtt TranscribeLambda.Arn
                   - !GetAtt TranslateLambda.Arn
                   - !GetAtt PollyLambda.Arn
-
+              - Effect: Allow
+                Action:
+                  - "s3:PutObject"
+                Resource:
+                  Fn::Join:
+                    - ""
+                    -
+                      - "arn:aws:s3:::"
+                      -  Ref: "DataBucket"
+                      - "/*"
 
 Outputs:
   S3BucketOutput:
