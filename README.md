@@ -47,7 +47,7 @@ Implement the function to parse data from S3 event to get audio file link and tr
 Use Lambda service in the AWS Console to open `TranslateLambda` function. In the `Add triggers` section on the left configure trigger for this function:
 
 1. Choose S3 as the trigger and go to the `Configure triggers` section.
-1. Pick correct S3 bucket name.
+1. Pick correct S3 bucket name (S3BucketOutput from above).
 1. Pick `PUT` as event type.
 1. Put `.json` as suffix.
 1. Click `Add` at the bottom of the page to add trigger.
